@@ -8,13 +8,19 @@ display_help() {
     echo ""
     echo "Options:"
     echo "  -h  --help        Display this help"
+    echo "  -l  --log         Log stdout and stderr to a file"
 }
+
+RBENV_RUN_LOGGING=
 
 while [[ -n "$1" ]]; do
     case "$1" in
     '-h' | '--help')
         display_help
         exit
+        ;;
+    '-l' | '--log')
+        RBENV_RUN_LOGGING=1
         ;;
     *)
         break
@@ -29,7 +35,13 @@ rubyversion=$1
 shift
 
 rbenv shell $rubyversion
-$@
+
+if [[ $RBENV_RUN_LOGGING = "1" ]]; then
+    $@ 2>&1 | tee "${rubyversion}.log"
+else
+    $@
+fi
+
 rv=$?
 
 exit $rv
