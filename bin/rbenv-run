@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+[ -n "$RBENV_DEBUG" ] && set -x
+
+display_help() {
+    echo "$(basename $0): Run a command with a specific ruby"
+    echo ""
+    echo "Usage: $(basename $0) <rubyversion> [<options>] <command>"
+    echo ""
+    echo "Options:"
+    echo "  -h  --help        Display this help"
+}
+
+while [[ -n "$1" ]]; do
+    case "$1" in
+    '-h' | '--help')
+        display_help
+        exit
+        ;;
+    *)
+        break
+        ;;
+    esac
+    shift
+done
+
+eval "$(rbenv init -)"
+
+rubyversion=$1
+shift
+
+rbenv shell $rubyversion
+$@
+rv=$?
+
+exit $rv
